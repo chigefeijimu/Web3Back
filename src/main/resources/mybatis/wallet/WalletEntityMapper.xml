@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.wallet.mapper.WalletEntityMapper">
+    
+    <resultMap type="com.ruoyi.project.wallet.domain.WalletEntity" id="WalletEntityResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="address"    column="address"    />
+        <result property="pkey"    column="pkey"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectWalletEntityVo">
+        select id, name, address, pkey, create_time, user_id from wallet_wallet
+    </sql>
+
+    <select id="selectWalletEntityList" parameterType="com.ruoyi.project.wallet.domain.WalletEntity" resultMap="WalletEntityResult">
+        <include refid="selectWalletEntityVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="pkey != null  and pkey != ''"> and pkey = #{pkey}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectWalletEntityById" parameterType="Long" resultMap="WalletEntityResult">
+        <include refid="selectWalletEntityVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertWalletEntity" parameterType="com.ruoyi.project.wallet.domain.WalletEntity">
+        insert into wallet_wallet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="address != null">address,</if>
+            <if test="pkey != null">pkey,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="address != null">#{address},</if>
+            <if test="pkey != null">#{pkey},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWalletEntity" parameterType="com.ruoyi.project.wallet.domain.WalletEntity">
+        update wallet_wallet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="pkey != null">pkey = #{pkey},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWalletEntityById" parameterType="Long">
+        delete from wallet_wallet where id = #{id}
+    </delete>
+
+    <delete id="deleteWalletEntityByIds" parameterType="String">
+        delete from wallet_wallet where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
