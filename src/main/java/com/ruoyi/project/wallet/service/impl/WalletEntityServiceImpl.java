@@ -3,6 +3,8 @@ package com.ruoyi.project.wallet.service.impl;
 import java.util.List;
 
 import cn.hutool.core.util.IdUtil;
+import com.fasterxml.jackson.databind.ser.Serializers;
+import com.ruoyi.common.entity.vo.WalletVo;
 import com.ruoyi.common.enums.ChainTypeEnum;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -10,6 +12,7 @@ import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.common.utils.wallet.WalletUtils;
 import com.ruoyi.framework.security.LoginUser;
 import com.ruoyi.project.wallet.domain.dto.WalletAddDto;
+import org.bitcoinj.core.Base58;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.wallet.mapper.WalletEntityMapper;
@@ -64,23 +67,23 @@ public class WalletEntityServiceImpl implements IWalletEntityService
     public int insertWalletEntity(WalletAddDto walletAddDto)
     {
         LoginUser loginUser = SecurityUtils.getLoginUser();
+        WalletEntity walletEntity = WalletEntity.builder()
+                .id(IdUtil.getSnowflakeNextId())
+                .name(walletAddDto.getName())
+                .userId(loginUser.getUserId())
+                .chainType(walletAddDto.getChainsValue()).build();
 
         if (walletAddDto.getChainsValue().equals(ChainTypeEnum.SOLANA.getValue())) {
-            byte[] solanaWalletPretty;
+            WalletVo solanaWallet;
             if (walletAddDto.getIsPretty() == 1) {
-                solanaWalletPretty = WalletUtils.createSolanaWalletPretty(walletAddDto.getPrettyPrefix(), walletAddDto.getPrettySuffix());
+                solanaWallet = WalletUtils.createSolanaWalletPretty(walletAddDto.getPrettyPrefix(), walletAddDto.getPrettySuffix());
             } else {
-                solanaWalletPretty = WalletUtils.createSolanaWallet();
+                solanaWallet = WalletUtils.createSolanaWallet();
             }
+            walletEntity.setAddress(solanaWallet.getPublicKey());
+            walletEntity.setPkey(solanaWallet.getPrivateKey());
         }
 
-        WalletEntity walletEntity = WalletEntity.builder().id(IdUtil.getSnowflakeNextId())
-                .name(walletAddDto.getName()).address("1")
-                .pkey("1").userId(loginUser.getUserId())
-                .createBy(loginUser.getUserId())
-                .createTime(DateUtils.getNowDate())
-                .remark(walletAddDto.getRemark())
-                .chainType(walletAddDto.getChainsValue()).build();
         return walletEntityMapper.insertWalletEntity(walletEntity);
     }
 

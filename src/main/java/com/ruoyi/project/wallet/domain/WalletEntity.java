@@ -42,26 +42,6 @@ public class WalletEntity extends BaseEntity
     @Excel(name = "钱包归属人")
     private Long userId;
 
-    /** 钱包创建人 */
-    @Excel(name = "钱包创建人")
-    private Long createBy;
-
-    /** 钱包创建时间 */
-    @Excel(name = "钱包创建时间")
-    private Date createTime;
-
-    /** 钱包修改人 */
-    @Excel(name = "钱包修改人")
-    private Long updateBy;
-
-    /** 钱包修改时间 */
-    @Excel(name = "钱包修改时间")
-    private Date updateTime;
-
-    /** 钱包备注 */
-    @Excel(name = "钱包备注")
-    private String remark;
-
     /** 钱包链类型 */
     @Excel(name = "钱包链类型")
     private Integer chainType;
